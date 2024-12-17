@@ -13,6 +13,8 @@ export default function Whack() {
   const handleStart = () => {
     setIsGameRunning(true);
     setBoxes(Array(9).fill(""));
+    setPoint(0); // Reset points at the start of the game
+
     let intervalId = setInterval(() => {
       const newArray = Array(9).fill("");
       const randomIndex = Math.floor(Math.random() * 9);
@@ -23,24 +25,23 @@ export default function Whack() {
     setTimeout(() => {
       clearInterval(intervalId);
       setBoxes(Array(9).fill(""));
-
       setIsGameRunning(false);
-      console.log("high1");
-      console.log(point, highScore);
 
-      if (point > highScore) {
-        console.log("high2");
-        localStorage.setItem("highScore", point.toString());
-        setHighScore(point);
-      }
+      setPoint((prevPoint) => {
+        console.log(`🟢 Final points: ${prevPoint}, Previous High Score: ${highScore}`);
+        if (prevPoint > highScore) {
+          console.log(`🏆 New High Score: ${prevPoint} (old was ${highScore})`);
+          localStorage.setItem("highScore", prevPoint.toString());
+          setHighScore(prevPoint);
+        }
+        return prevPoint; // Return the current point to avoid resetting it
+      });
     }, 10000);
   };
 
   const handleClick = (index) => {
     if (boxes[index] === "Quack") {
       setPoint((prevPoint) => prevPoint + 1);
-      console.log(point);
-
       const newArray = [...boxes];
       newArray[index] = "";
       setBoxes(newArray);
